@@ -242,15 +242,33 @@ const getStatusText = (status) => {
                                 v-if="activeTab === 'manufactured'"
                                 class="px-6 py-4 whitespace-nowrap text-sm"
                                 :class="
-                                    piece.difference > 0
+                                    (parseFloat(piece.real_weight) -
+                                        parseFloat(piece.theorical_weight) ||
+                                        0) > 0
                                         ? 'text-red-600'
-                                        : piece.difference < 0
+                                        : (parseFloat(piece.real_weight) -
+                                              parseFloat(
+                                                  piece.theorical_weight
+                                              ) || 0) < 0
                                         ? 'text-green-600'
                                         : 'text-gray-900'
                                 "
                             >
-                                {{ piece.difference > 0 ? "+" : ""
-                                }}{{ piece.difference }} kg
+                                {{
+                                    (parseFloat(piece.real_weight) -
+                                        parseFloat(piece.theorical_weight) ||
+                                        0) > 0
+                                        ? "+"
+                                        : ""
+                                }}{{
+                                    (
+                                        parseFloat(piece.real_weight) -
+                                            parseFloat(
+                                                piece.theorical_weight
+                                            ) || 0
+                                    ).toFixed(2)
+                                }}
+                                kg
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span
