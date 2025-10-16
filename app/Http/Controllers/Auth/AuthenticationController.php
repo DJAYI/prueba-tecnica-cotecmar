@@ -19,7 +19,7 @@ class AuthenticationController extends Controller
             return redirect()->intended('/admin');
         }
 
-        return redirect('/auth/login')->withErrors(['message' => 'The provided credentials do not match our records.']);
+        return redirect('/auth/login')->withErrors(['message' => 'Las credenciales proporcionadas no corresponden a nuestros registros.']);
     }
 
     public function logout(Request $request)
