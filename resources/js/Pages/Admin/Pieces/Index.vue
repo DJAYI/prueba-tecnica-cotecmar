@@ -193,6 +193,13 @@ const getStatusText = (status) => {
                                 Manufacturado por
                             </th>
                             <th
+                                v-if="activeTab === 'manufactured'"
+                                scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Fecha de Fabricación
+                            </th>
+                            <th
                                 scope="col"
                                 class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
                             >
@@ -290,6 +297,24 @@ const getStatusText = (status) => {
                                 class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
                             >
                                 {{ piece.user.name ?? "N/A" }}
+                            </td>
+                            <td
+                                v-if="activeTab === 'manufactured'"
+                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                            >
+                                {{
+                                    piece.manufactured_at
+                                        ? new Date(
+                                              piece.manufactured_at
+                                          ).toLocaleString("es-ES", {
+                                              year: "numeric",
+                                              month: "2-digit",
+                                              day: "2-digit",
+                                              hour: "2-digit",
+                                              minute: "2-digit",
+                                          })
+                                        : "N/A"
+                                }}
                             </td>
                             <td
                                 class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
