@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\BlockController;
+use App\Http\Controllers\ManufacturingController;
 use App\Http\Controllers\PieceController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
@@ -47,13 +48,14 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 
     // Manufacturing Registration (separate from pieces CRUD)
     Route::prefix('manufacturing')->group(function () {
-        Route::get('/', [PieceController::class, 'manufacturingIndex'])->name('manufacturing.index');
-        Route::get('/{id}/register', [PieceController::class, 'manufacturingRegister'])->name('manufacturing.register');
-        Route::put('/{id}/complete', [PieceController::class, 'manufacturingComplete'])->name('manufacturing.complete');
+        Route::get('/', [ManufacturingController::class, 'index'])->name('manufacturing.index');
+        Route::get('/{id}/register', [ManufacturingController::class, 'register'])->name('manufacturing.register');
+        Route::put('/{id}/complete', [ManufacturingController::class, 'complete'])->name('manufacturing.complete');
+        Route::get('/api/pieces/{blockId}', [ManufacturingController::class, 'getPendingPiecesByBlock'])->name('manufacturing.pieces');
     });
 
     // Piece Reports
-    Route::get('/piece-reports', [PieceController::class, 'generatePieceReport'])->name('pieces.report');
+    Route::post('/piece-reports', [PieceController::class, 'generatePieceReport'])->name('pieces.report');
 });
 
 Route::group([

@@ -143,59 +143,7 @@ class PieceController extends Controller
     }
 
 
-    public function manufacturingIndex()
-    {
-        $projects = $this->projectService->getAllProjects();
 
-        return Inertia::render('Admin/Manufacturing/Index', [
-            'projects' => $projects,
-        ]);
-    }
-
-    public function manufacturingRegister(int $id)
-    {
-        $piece = $this->pieceService->getPieceById($id);
-
-        if (!$piece) {
-            return redirect()->route('manufacturing.index')
-                ->with('error', 'Pieza no encontrada');
-        }
-
-        if ($piece->status !== PieceStatusEnum::PENDING) {
-            return redirect()->route('manufacturing.index')
-                ->with('error', 'Solo se pueden registrar piezas pendientes');
-        }
-
-        $projects = $this->projectService->getAllProjects();
-        $blocks = $this->blockService->getAllBlocks();
-
-        return Inertia::render('Admin/Manufacturing/Register', [
-            'piece' => $piece,
-            'projects' => $projects,
-            'blocks' => $blocks,
-            'auth_user' => Auth::user(),
-        ]);
-    }
-
-
-    public function manufacturingComplete(Request $request, int $id)
-    {
-        $validated = $request->validate([
-            'real_weight' => 'required|numeric|min:0',
-        ]);
-
-        $validated['status'] = PieceStatusEnum::MANUFACTURED->value;
-
-        $piece = $this->pieceService->updatePiece($id, $validated);
-
-        if (!$piece) {
-            return redirect()->route('manufacturing.index')
-                ->with('error', 'Error al registrar la fabricación');
-        }
-
-        return redirect()->route('manufacturing.index')
-            ->with('success', 'Fabricación registrada exitosamente');
-    }
 
     public function generatePieceReport()
     {
