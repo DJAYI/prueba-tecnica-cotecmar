@@ -77,6 +77,11 @@ npm run dev
 npm run build
 ```
 
+```bash
+# Generar la APP KEY
+php artisan key:generate
+```
+
 ## 🏃‍♂️ Ejecutar el Proyecto (Despues de correr migraciones)
 
 ### Desarrollo
