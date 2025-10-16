@@ -44,6 +44,13 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('/api/blocks/{projectId}', [PieceController::class, 'getBlocksByProject'])->name('pieces.blocks');
         Route::get('/api/pieces/{blockId}', [PieceController::class, 'getPendingPiecesByBlock'])->name('pieces.pending');
     });
+
+    // Manufacturing Registration (separate from pieces CRUD)
+    Route::prefix('manufacturing')->group(function () {
+        Route::get('/', [PieceController::class, 'manufacturingIndex'])->name('manufacturing.index');
+        Route::get('/{id}/register', [PieceController::class, 'manufacturingRegister'])->name('manufacturing.register');
+        Route::put('/{id}/complete', [PieceController::class, 'manufacturingComplete'])->name('manufacturing.complete');
+    });
 });
 
 Route::group([

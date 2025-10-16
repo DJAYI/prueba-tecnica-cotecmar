@@ -263,44 +263,69 @@ const getStatusText = (status) => {
                             <td
                                 class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
                             >
-                                <Link
-                                    v-if="activeTab === 'pending'"
-                                    :href="`/admin/pieces/${piece.id}/edit`"
-                                    class="text-blue-600 hover:text-blue-900 transition-colors"
+                                <div
+                                    class="flex items-center justify-end gap-2"
                                 >
-                                    <svg
-                                        class="w-5 h-5 inline"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
+                                    <Link
+                                        v-if="activeTab === 'pending'"
+                                        :href="`/admin/pieces/${piece.id}/edit`"
+                                        class="text-gray-600 hover:text-gray-900 transition-colors"
+                                        title="Editar pieza"
                                     >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                        />
-                                    </svg>
-                                </Link>
-                                <span
-                                    v-else
-                                    class="text-gray-400"
-                                    title="No se puede editar piezas fabricadas"
-                                >
-                                    <svg
-                                        class="w-5 h-5 inline"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
+                                        <svg
+                                            class="w-5 h-5 inline"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                            />
+                                        </svg>
+                                    </Link>
+                                    <Link
+                                        v-if="activeTab === 'pending'"
+                                        :href="`/admin/manufacturing/${piece.id}/register`"
+                                        class="text-blue-600 hover:text-blue-900 transition-colors"
+                                        title="Registrar fabricación"
                                     >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                                        />
-                                    </svg>
-                                </span>
+                                        <svg
+                                            class="w-5 h-5 inline"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                                            />
+                                        </svg>
+                                    </Link>
+                                    <span
+                                        v-if="activeTab === 'manufactured'"
+                                        class="text-gray-400"
+                                        title="No se puede editar piezas fabricadas"
+                                    >
+                                        <svg
+                                            class="w-5 h-5 inline"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                                            />
+                                        </svg>
+                                    </span>
+                                </div>
                             </td>
                         </tr>
                     </tbody>

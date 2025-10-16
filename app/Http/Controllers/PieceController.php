@@ -103,8 +103,9 @@ class PieceController extends Controller
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
-            'real_weight' => 'required|numeric|min:0',
-            'status' => 'required|in:pending,manufactured',
+            'name' => 'required|string|max:3',
+            'theorical_weight' => 'required|numeric|min:0',
+            'block_id' => 'required|string|exists:blocks,id',
         ]);
 
         $piece = $this->pieceService->updatePiece($id, $validated);
@@ -152,5 +153,68 @@ class PieceController extends Controller
         $pieces = $this->pieceService->getPendingPiecesByBlock($blockId);
 
         return response()->json($pieces);
+    }
+
+    // ========== MANUFACTURING REGISTRATION ==========
+
+    /**
+     * Display manufacturing registration index with filters
+     */
+    public function manufacturingIndex()
+    {
+        $projects = $this->projectService->getAllProjects();
+
+        return Inertia::render('Admin/Manufacturing/Index', [
+            'projects' => $projects,
+        ]);
+    }
+
+    /**
+     * Show the form for registering manufacturing for a specific pending piece
+     */
+    public function manufacturingRegister(string $id)
+    {
+        $piece = $this->pieceService->getPieceById($id);
+
+        if (!$piece) {
+            return redirect()->route('manufacturing.index')
+                ->with('error', 'Pieza no encontrada');
+        }
+
+        if ($piece->status !== PieceStatusEnum::PENDING) {
+            return redirect()->route('manufacturing.index')
+                ->with('error', 'Solo se pueden registrar piezas pendientes');
+        }
+
+        $projects = $this->projectService->getAllProjects();
+        $blocks = $this->blockService->getAllBlocks();
+
+        return Inertia::render('Admin/Manufacturing/Register', [
+            'piece' => $piece,
+            'projects' => $projects,
+            'blocks' => $blocks,
+        ]);
+    }
+
+    /**
+     * Complete the manufacturing registration
+     */
+    public function manufacturingComplete(Request $request, string $id)
+    {
+        $validated = $request->validate([
+            'real_weight' => 'required|numeric|min:0',
+        ]);
+
+        $validated['status'] = PieceStatusEnum::MANUFACTURED->value;
+
+        $piece = $this->pieceService->updatePiece($id, $validated);
+
+        if (!$piece) {
+            return redirect()->route('manufacturing.index')
+                ->with('error', 'Error al registrar la fabricación');
+        }
+
+        return redirect()->route('manufacturing.index')
+            ->with('success', 'Fabricación registrada exitosamente');
     }
 }
