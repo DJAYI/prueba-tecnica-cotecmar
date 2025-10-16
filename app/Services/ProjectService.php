@@ -23,9 +23,6 @@ class ProjectService
 
     public function createProject(array $data): Project
     {
-        if (empty($data['project_id'])) {
-            throw new \InvalidArgumentException('project_id is required to create a Project.');
-        }
 
         if (empty($data['name'])) {
             throw new \InvalidArgumentException('name is required to create a Project.');

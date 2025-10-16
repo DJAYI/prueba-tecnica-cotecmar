@@ -35,11 +35,14 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'id' => 'required|integer|unique:projects,id',
+            'id' => 'required|string|max:4|unique:projects,id',
             'name' => 'required|string|max:255',
         ]);
 
         $this->projectService->createProject($validated);
+
+        return redirect()->route('projects.index')
+            ->with('success', 'Proyecto creado exitosamente.');
     }
 
     public function edit(string $id)

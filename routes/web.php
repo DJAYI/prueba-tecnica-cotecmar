@@ -24,8 +24,22 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::put('/{id}', [ProjectController::class, 'update'])->name('projects.update');
         Route::delete('/{id}', [ProjectController::class, 'destroy'])->name('projects.destroy');
     });
-    Route::resource('blocks', BlockController::class);
-    Route::resource('pieces', PieceController::class);
+    Route::prefix('blocks')->group(function () {
+        Route::get('/', [BlockController::class, 'index'])->name('blocks.index');
+        Route::get('/create', [BlockController::class, 'create'])->name('blocks.create');
+        Route::post('/', [BlockController::class, 'store'])->name('blocks.store');
+        Route::get('/{id}/edit', [BlockController::class, 'edit'])->name('blocks.edit');
+        Route::put('/{id}', [BlockController::class, 'update'])->name('blocks.update');
+        Route::delete('/{id}', [BlockController::class, 'destroy'])->name('blocks.destroy');
+    });
+    Route::prefix('pieces')->group(function () {
+        Route::get('/', [PieceController::class, 'index'])->name('pieces.index');
+        Route::get('/create', [PieceController::class, 'create'])->name('pieces.create');
+        Route::post('/', [PieceController::class, 'store'])->name('pieces.store');
+        Route::get('/{id}/edit', [PieceController::class, 'edit'])->name('pieces.edit');
+        Route::put('/{id}', [PieceController::class, 'update'])->name('pieces.update');
+        Route::delete('/{id}', [PieceController::class, 'destroy'])->name('pieces.destroy');
+    });
 });
 
 Route::group([
