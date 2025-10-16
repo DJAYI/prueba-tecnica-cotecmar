@@ -186,6 +186,13 @@ const getStatusText = (status) => {
                                 Estado
                             </th>
                             <th
+                                v-if="activeTab === 'manufactured'"
+                                scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Manufacturado por
+                            </th>
+                            <th
                                 scope="col"
                                 class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
                             >
@@ -277,6 +284,12 @@ const getStatusText = (status) => {
                                 >
                                     {{ getStatusText(piece.status) }}
                                 </span>
+                            </td>
+                            <td
+                                v-if="activeTab === 'manufactured'"
+                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                            >
+                                {{ piece.user.name || "N/A" }}
                             </td>
                             <td
                                 class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
