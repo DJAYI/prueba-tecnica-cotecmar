@@ -1,6 +1,7 @@
 <script setup>
 import { Link, usePage } from "@inertiajs/vue3";
 import axios from "axios";
+import FlashMessages from "../Components/FlashMessages.vue";
 
 const page = usePage();
 
@@ -219,6 +220,10 @@ const downloadReport = async () => {
             <!-- Main Content -->
             <main class="flex-1 max-h-screen overflow-auto p-6">
                 <slot name="header"> </slot>
+
+                <!-- Flash Messages -->
+                <FlashMessages />
+
                 <div
                     class="bg-white shadow-sm rounded-xl border border-gray-200 p-6 mt-4"
                 >

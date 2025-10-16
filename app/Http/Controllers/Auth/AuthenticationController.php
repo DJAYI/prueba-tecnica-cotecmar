@@ -20,10 +20,10 @@ class AuthenticationController extends Controller
         }
 
         if ($credentials['email'] === '' || $credentials['password'] === '') {
-            return redirect('/auth/login')->withErrors(['message' => 'Por favor, complete todos los campos.']);
+            return redirect('/auth/login')->with('error', 'Por favor, complete todos los campos.');
         }
 
-        return redirect('/auth/login')->withErrors(['message' => 'Las credenciales proporcionadas no corresponden a nuestros registros.']);
+        return redirect('/auth/login')->with('error', 'Las credenciales proporcionadas no corresponden a nuestros registros.');
     }
 
     public function logout(Request $request)
@@ -31,6 +31,6 @@ class AuthenticationController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/');
+        return redirect('/')->with('message', 'Sesión cerrada correctamente.');
     }
 }

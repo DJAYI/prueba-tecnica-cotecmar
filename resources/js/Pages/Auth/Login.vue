@@ -1,6 +1,7 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
 import { reactive } from "vue";
+import FlashMessages from "../../Components/FlashMessages.vue";
 
 defineProps({
     errors: Object,
@@ -21,6 +22,9 @@ const submit = () => {
         class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4 py-12"
     >
         <div class="w-full max-w-md">
+            <!-- Flash Messages -->
+            <FlashMessages />
+
             <div
                 class="bg-white rounded-xl shadow-lg border border-gray-200 p-8"
             >

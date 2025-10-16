@@ -5,11 +5,15 @@ use App\Http\Controllers\BlockController;
 use App\Http\Controllers\ManufacturingController;
 use App\Http\Controllers\PieceController;
 use App\Http\Controllers\ProjectController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return redirect('/admin/manufacturing');
+    if (Auth::check()) {
+        return redirect('/admin/manufacturing');
+    }
+    return Inertia::render('Welcome');
 });
 
 Route::prefix('admin')->middleware(['auth'])->group(function () {
