@@ -16,8 +16,14 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         return Inertia::render('Admin/Dashboard');
     })->name('admin.index');
 
-    Route::resource('users', UserController::class);
-    Route::resource('projects', ProjectController::class);
+    Route::prefix('projects')->group(function () {
+        Route::get('/', [ProjectController::class, 'index'])->name('projects.index');
+        Route::get('/create', [ProjectController::class, 'create'])->name('projects.create');
+        Route::post('/', [ProjectController::class, 'store'])->name('projects.store');
+        Route::get('/{id}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
+        Route::put('/{id}', [ProjectController::class, 'update'])->name('projects.update');
+        Route::delete('/{id}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+    });
     Route::resource('blocks', BlockController::class);
     Route::resource('pieces', PieceController::class);
 });

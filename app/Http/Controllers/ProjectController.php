@@ -51,13 +51,14 @@ class ProjectController extends Controller
         ]);
     }
 
+
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
         ]);
 
-        $this->projectService->updateProject($id, $validated);
+        return $this->projectService->updateProject($id, $validated);
     }
 
     public function destroy(string $id)

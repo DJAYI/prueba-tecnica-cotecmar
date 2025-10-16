@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
 
 class ProjectService
 {
@@ -38,21 +39,21 @@ class ProjectService
         return Project::create($data);
     }
 
-    public function updateProject(string $id, array $data): bool
+    public function updateProject(string $id, array $data): RedirectResponse
     {
         $Project = Project::find($id);
         if (!$Project) {
-            return false;
+            return redirect()->back()->with('error', 'Project not found.');
         }
 
         if (empty($data['name'])) {
             throw new \InvalidArgumentException('name is required to update a Project.');
         }
-        if (empty($data['id'])) {
-            throw new \InvalidArgumentException('id is required to update a Project.');
-        }
 
-        return $Project->update($data);
+        $Project->update($data);
+
+        return redirect()->route('projects.index')
+            ->with('success', 'Project updated successfully.');
     }
 
     public function deleteProject(string $id): ?bool
