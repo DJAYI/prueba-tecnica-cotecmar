@@ -1,5 +1,6 @@
 <script setup>
 import { Link, usePage } from "@inertiajs/vue3";
+import axios from "axios";
 
 const page = usePage();
 
@@ -16,6 +17,26 @@ const linkClass = (path) => {
     return isActive(path)
         ? "flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg transition-all"
         : "flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all";
+};
+
+const downloadReport = async () => {
+    try {
+        const response = await axios.get("/admin/piece-reports");
+        console.log("Respuesta del servidor:", response.data);
+
+        if (response.data.success) {
+            // Crear un enlace temporal para descargar el archivo
+            const link = document.createElement("a");
+            link.href = response.data.download_url;
+            link.download = response.data.filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    } catch (error) {
+        console.error("Error al descargar el reporte:", error);
+        alert("Error al generar el reporte. Por favor, intenta de nuevo.");
+    }
 };
 </script>
 
@@ -149,9 +170,9 @@ const linkClass = (path) => {
                             </svg>
                             Registrar Fabricación
                         </Link>
-                        <Link
-                            href="/admin/piece-reports"
-                            :class="linkClass('/admin/piece-reports')"
+                        <button
+                            @click="downloadReport"
+                            class="bg-blue-100 mt-4 border border-blue-400 text-blue-700 font-semibold hover:bg-blue-200 hover:border-blue-500 flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all w-full"
                         >
                             <svg
                                 class="w-5 h-5"
@@ -166,8 +187,8 @@ const linkClass = (path) => {
                                     d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                                 />
                             </svg>
-                            Reportes de Piezas
-                        </Link>
+                            Descargar Reporte de Piezas
+                        </button>
                     </nav>
                 </div>
                 <div class="px-3 pb-4 border-t border-gray-200 pt-4">

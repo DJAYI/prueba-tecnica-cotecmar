@@ -51,6 +51,9 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('/{id}/register', [PieceController::class, 'manufacturingRegister'])->name('manufacturing.register');
         Route::put('/{id}/complete', [PieceController::class, 'manufacturingComplete'])->name('manufacturing.complete');
     });
+
+    // Piece Reports
+    Route::get('/piece-reports', [PieceController::class, 'generatePieceReport'])->name('pieces.report');
 });
 
 Route::group([

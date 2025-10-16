@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Enums\PieceStatusEnum;
+use App\Exports\PiecesReportExport;
 use App\Models\Piece;
 use App\Services\BlockService;
 use App\Services\PieceService;
 use App\Services\ProjectService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class PieceController extends Controller
@@ -27,9 +30,7 @@ class PieceController extends Controller
         $this->blockService = $blockService;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
         $pieces = $this->pieceService->getAllPieces();
@@ -47,9 +48,6 @@ class PieceController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $blocks = $this->blockService->getAllBlocks();
@@ -59,9 +57,7 @@ class PieceController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -76,9 +72,7 @@ class PieceController extends Controller
             ->with('success', 'Pieza creada exitosamente');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(string $id)
     {
         $piece = $this->pieceService->getPieceById($id);
@@ -98,9 +92,7 @@ class PieceController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
@@ -120,9 +112,7 @@ class PieceController extends Controller
             ->with('success', 'Pieza actualizada exitosamente');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(string $id)
     {
         $deleted = $this->pieceService->deletePiece($id);
@@ -136,9 +126,7 @@ class PieceController extends Controller
             ->with('success', 'Pieza eliminada exitosamente');
     }
 
-    /**
-     * Get blocks by project (API endpoint for cascading selects)
-     */
+
     public function getBlocksByProject(string $projectId)
     {
         $blocks = $this->blockService->getBlocksByProject($projectId);
@@ -146,9 +134,7 @@ class PieceController extends Controller
         return response()->json($blocks);
     }
 
-    /**
-     * Get pending pieces by block (API endpoint for cascading selects)
-     */
+
     public function getPendingPiecesByBlock(string $blockId)
     {
         $pieces = $this->pieceService->getPendingPiecesByBlock($blockId);
@@ -156,11 +142,7 @@ class PieceController extends Controller
         return response()->json($pieces);
     }
 
-    // ========== MANUFACTURING REGISTRATION ==========
 
-    /**
-     * Display manufacturing registration index with filters
-     */
     public function manufacturingIndex()
     {
         $projects = $this->projectService->getAllProjects();
@@ -170,9 +152,6 @@ class PieceController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for registering manufacturing for a specific pending piece
-     */
     public function manufacturingRegister(string $id)
     {
         $piece = $this->pieceService->getPieceById($id);
@@ -198,9 +177,7 @@ class PieceController extends Controller
         ]);
     }
 
-    /**
-     * Complete the manufacturing registration
-     */
+
     public function manufacturingComplete(Request $request, string $id)
     {
         $validated = $request->validate([
@@ -218,5 +195,23 @@ class PieceController extends Controller
 
         return redirect()->route('manufacturing.index')
             ->with('success', 'Fabricación registrada exitosamente');
+    }
+
+    public function generatePieceReport()
+    {
+        try {
+            Log::info('Iniciando generación de reporte de piezas...');
+
+            $export = new PiecesReportExport($this->pieceService);
+            $result = $export->downloadPDF();
+
+            Log::info('Reporte generado exitosamente');
+
+            return response()->json($result);
+        } catch (\Exception $e) {
+            Log::error('Error al generar el reporte: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return redirect()->back()->with('error', 'Error al generar el reporte: ' . $e->getMessage());
+        }
     }
 }
