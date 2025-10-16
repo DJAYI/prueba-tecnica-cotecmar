@@ -128,14 +128,41 @@ const csrf = ref(usePage().props.csrf_token);
                             <option value="" disabled>
                                 Selecciona un bloque
                             </option>
-                            <option
-                                v-for="block in blocks"
-                                :key="block.id"
-                                :value="block.id"
+
+                            <optgroup
+                                v-for="project in projects"
+                                :key="project.id"
+                                :label="project.name"
                             >
-                                {{ block.id }} -
-                                {{ block.project?.name || "N/A" }}
-                            </option>
+                                <option
+                                    v-for="block in blocks.filter(
+                                        (b) => b.project_id === project.id
+                                    )"
+                                    :key="block.id"
+                                    :value="block.id"
+                                >
+                                    {{ block.id }} -
+                                    {{ block.name || "Bloque" }}
+                                </option>
+                            </optgroup>
+
+                            <optgroup
+                                v-if="
+                                    blocks.filter((b) => !b.project_id).length
+                                "
+                                label="Sin proyecto"
+                            >
+                                <option
+                                    v-for="block in blocks.filter(
+                                        (b) => !b.project_id
+                                    )"
+                                    :key="block.id"
+                                    :value="block.id"
+                                >
+                                    {{ block.id }} -
+                                    {{ block.name || "Bloque" }}
+                                </option>
+                            </optgroup>
                         </select>
                         <p class="mt-2 text-xs text-gray-500">
                             Bloque al que pertenece

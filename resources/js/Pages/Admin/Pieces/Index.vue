@@ -289,7 +289,7 @@ const getStatusText = (status) => {
                                 v-if="activeTab === 'manufactured'"
                                 class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
                             >
-                                {{ piece.user.name || "N/A" }}
+                                {{ piece.user.name ?? "N/A" }}
                             </td>
                             <td
                                 class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
