@@ -55,7 +55,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     });
 
     // Piece Reports
-    Route::post('/piece-reports', [PieceController::class, 'generatePieceReport'])->name('pieces.report');
+    Route::get('/piece-reports', [PieceController::class, 'generatePieceReport'])->name('pieces.report');
 });
 
 Route::group([
