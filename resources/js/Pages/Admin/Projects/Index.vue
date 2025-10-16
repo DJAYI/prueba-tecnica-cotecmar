@@ -18,7 +18,6 @@ defineProps({
                     Gestiona todos los proyectos del sistema.
                 </p>
             </div>
-
             <div
                 class="bg-white rounded-lg border border-gray-200 overflow-hidden"
             >
@@ -71,7 +70,7 @@ defineProps({
                                         <Link
                                             method="get"
                                             :href="`/admin/projects/${project.id}/edit`"
-                                            class="text-gray-600 hover:text-gray-900 transition-colors"
+                                            class="px-3 py-1 bg-yellow-400 text-black rounded hover:bg-yellow-500 transition-colors font-medium"
                                         >
                                             Editar
                                         </Link>
@@ -82,7 +81,7 @@ defineProps({
                                         >
                                             <button
                                                 type="submit"
-                                                class="text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
+                                                class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors font-medium cursor-pointer"
                                             >
                                                 Eliminar
                                             </button>

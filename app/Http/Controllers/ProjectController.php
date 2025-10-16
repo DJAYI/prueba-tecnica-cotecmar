@@ -42,17 +42,7 @@ class ProjectController extends Controller
         $this->projectService->createProject($validated);
     }
 
-
-    public function show(int $id)
-    {
-        $project = $this->projectService->getProjectById($id);
-
-        return Inertia::render('Admin/Projects/Show', [
-            'project' => $project
-        ]);
-    }
-
-    public function edit(int $id)
+    public function edit(string $id)
     {
         $project = $this->projectService->getProjectById($id);
 
@@ -61,7 +51,7 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, string $id)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',

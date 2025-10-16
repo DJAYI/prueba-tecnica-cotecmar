@@ -12,7 +12,7 @@ class ProjectService
         return Project::all();
     }
 
-    public function getProjectById(int $id): ?Project
+    public function getProjectById(string $id): ?Project
     {
         if (!$id) {
             return null;
@@ -38,7 +38,7 @@ class ProjectService
         return Project::create($data);
     }
 
-    public function updateProject(int $id, array $data): bool
+    public function updateProject(string $id, array $data): bool
     {
         $Project = Project::find($id);
         if (!$Project) {
@@ -59,10 +59,8 @@ class ProjectService
     {
         $Project = Project::find($id, ['id']);
         if (!$Project) {
-            dd('Project not found.');
             return null;
         }
-        dd('Deleting Project with ID: ' . $id);
         return $Project->delete();
     }
 }
