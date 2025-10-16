@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return redirect('/admin');
+    return redirect('/admin/manufacturing');
 });
 
 Route::prefix('admin')->middleware(['auth'])->group(function () {
