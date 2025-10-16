@@ -2,9 +2,21 @@
 import { Link, usePage } from "@inertiajs/vue3";
 import axios from "axios";
 import FlashMessages from "../Components/FlashMessages.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 const page = usePage();
+
+const auth_user = ref(null);
+
+// Cargar información del usuario desde la ruta de perfil
+onMounted(async () => {
+    try {
+        const response = await axios.get("/auth/profile");
+        auth_user.value = response.data;
+    } catch (error) {
+        console.error("Error al cargar el perfil del usuario:", error);
+    }
+});
 
 const isActive = (path) => {
     // Para el dashboard principal, debe ser exacto
@@ -78,10 +90,10 @@ const downloadReport = async () => {
                             </div>
                             <div>
                                 <h2 class="text-lg font-bold text-gray-900">
-                                    Cotecmar
+                                    {{ auth_user?.name || "Cargando..." }}
                                 </h2>
                                 <p class="text-xs text-gray-500">
-                                    Administración
+                                    Cotecmar Naval Projects Management
                                 </p>
                             </div>
                         </div>

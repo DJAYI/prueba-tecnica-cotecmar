@@ -7,7 +7,10 @@
         leave-from-class="opacity-100 transform translate-y-0"
         leave-to-class="opacity-0 transform translate-y-2"
     >
-        <div v-if="show" class="mb-6">
+        <div
+            v-if="show"
+            class="mb-6 absolute top-4 right-2 transform w-full max-w-md px-4"
+        >
             <!-- Success Messages -->
             <div
                 v-if="$page.props.flash?.success"
@@ -185,7 +188,7 @@ const checkForMessages = () => {
 
     show.value = hasFlash || hasErrors;
 
-    if (page.props.flash?.success) {
+    if (page.props.flash) {
         setTimeout(() => {
             show.value = false;
         }, 2000);

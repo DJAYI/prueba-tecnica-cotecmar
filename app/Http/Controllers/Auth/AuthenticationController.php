@@ -33,4 +33,11 @@ class AuthenticationController extends Controller
         $request->session()->regenerateToken();
         return redirect('/')->with('message', 'Sesión cerrada correctamente.');
     }
+
+    public function profile(Request $request)
+    {
+        $user = Auth::user();
+
+        return new JsonResponse($user);
+    }
 }
