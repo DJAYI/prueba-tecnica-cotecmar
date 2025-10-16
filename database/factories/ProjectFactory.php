@@ -17,7 +17,7 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => strtoupper($this->faker->lexify('???')),
+            'id' => strtoupper($this->faker->bothify('????')),
             'name' => $this->faker->word,
         ];
     }
