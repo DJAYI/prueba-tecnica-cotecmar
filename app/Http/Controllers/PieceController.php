@@ -8,6 +8,7 @@ use App\Services\BlockService;
 use App\Services\PieceService;
 use App\Services\ProjectService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class PieceController extends Controller
@@ -193,6 +194,7 @@ class PieceController extends Controller
             'piece' => $piece,
             'projects' => $projects,
             'blocks' => $blocks,
+            'auth_user' => Auth::user(),
         ]);
     }
 

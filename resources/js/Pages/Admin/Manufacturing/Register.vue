@@ -7,6 +7,7 @@ const props = defineProps({
     piece: Object,
     projects: Array,
     blocks: Array,
+    auth_user: Object,
 });
 
 const form = reactive({
@@ -324,9 +325,7 @@ const differenceClass = computed(() => {
                         </label>
                         <input
                             type="text"
-                            :value="
-                                $page.props.auth?.user?.name || 'Usuario Actual'
-                            "
+                            :value="auth_user.name || 'Usuario Actual'"
                             readonly
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm bg-gray-50 text-gray-700 cursor-not-allowed"
                         />
