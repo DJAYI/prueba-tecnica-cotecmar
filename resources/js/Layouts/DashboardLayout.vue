@@ -1,5 +1,22 @@
 <script setup>
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
+
+const page = usePage();
+
+const isActive = (path) => {
+    // Para el dashboard principal, debe ser exacto
+    if (path === "/admin") {
+        return page.url === "/admin";
+    }
+    // Para las demás rutas, verifica que comience con el path
+    return page.url.startsWith(path);
+};
+
+const linkClass = (path) => {
+    return isActive(path)
+        ? "flex items-center px-3 py-2 text-sm font-medium text-gray-900 bg-gray-100 rounded-md transition-colors"
+        : "flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors";
+};
 </script>
 
 <template>
@@ -15,33 +32,30 @@ import { Link } from "@inertiajs/vue3";
                     </h2>
                 </div>
                 <nav class="px-3 space-y-1">
-                    <Link
-                        href="/admin"
-                        class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors"
-                    >
+                    <Link href="/admin" :class="linkClass('/admin')">
                         Panel de Control
                     </Link>
                     <Link
                         href="/admin/projects"
-                        class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                        :class="linkClass('/admin/projects')"
                     >
                         Proyectos
                     </Link>
                     <Link
                         href="/admin/blocks"
-                        class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                        :class="linkClass('/admin/blocks')"
                     >
                         Bloques
                     </Link>
                     <Link
                         href="/admin/pieces"
-                        class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                        :class="linkClass('/admin/pieces')"
                     >
                         Piezas
                     </Link>
                     <Link
                         href="/admin/piece-reports"
-                        class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                        :class="linkClass('/admin/piece-reports')"
                     >
                         Reportes de Piezas
                     </Link>
