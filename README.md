@@ -77,7 +77,7 @@ npm run dev
 npm run build
 ```
 
-## 🏃‍♂️ Ejecutar el Proyecto
+## 🏃‍♂️ Ejecutar el Proyecto (Despues de correr migraciones)
 
 ### Desarrollo
 
@@ -91,6 +91,10 @@ npm run dev
 # Terminal 3: Optimizador
 php artisan optimize:clear
 ```
+
+Usuario Prueba:
+correo: test@example.com
+contraseña: password
 
 La aplicación estará disponible en: `http://localhost:8000`
 
@@ -184,7 +188,7 @@ Componentes individuales fabricados que conforman cada bloque.
 
 ```sql
 CREATE TABLE pieces (
-    id VARCHAR(12) PRIMARY KEY,         # Código único de pieza (12 caracteres)
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,  # ID secuencial automático
     name CHAR(3) NOT NULL,             # Código de pieza (3 caracteres)
     theorical_weight DECIMAL(10,2) NOT NULL,  # Peso teórico en kg
     real_weight DECIMAL(10,2) NULL,    # Peso real medido (nullable)
@@ -211,26 +215,27 @@ CREATE TABLE pieces (
 
 #### 1. **Identificadores Jerárquicos Personalizados**
 
-Se implementó un sistema de códigos alfanuméricos basado en el esquema de datos original:
+Se implementó un sistema mixto de identificadores según el nivel jerárquico:
 
 ```text
-Proyecto: "BICM" (4 chars máx) → Buque Oceanográfico
-  └── Bloque: "130-1110" (8 chars) → Sección 1110 del proyecto 130
-      └── Pieza: "B01", "A02", "H12", etc. (3 chars) → Componente específico
+Proyecto: "BICM" (string) → Buque Oceanográfico
+  └── Bloque: "130-1110" (string) → Sección 1110 del proyecto 130
+      └── Pieza: 1, 2, 3... (int auto) + name: "B01", "A02", "H12" (código)
 ```
 
 **Ejemplos reales del sistema**:
 
 -   **Proyectos**: BICM (Oceanográfico), BALC (Buque DA), OPV (Offshore), BRF (Refluvial)
 -   **Bloques**: "130-1110", "135-1110", "130-3510" (formato: sector-subsección)
--   **Piezas**: "B01", "A02", "H12", "R23", "J25", "U23", "E29" (código alfanumérico)
+-   **Piezas**: ID secuencial (1, 2, 3...) + name alfanumérico ("B01", "A02", "H12")
 
 **Justificación**:
 
--   **Nomenclatura naval real**: Basado en estándares de COTECMAR
--   **Flexibilidad de códigos**: IDs no secuenciales permiten códigos técnicos
--   **Trazabilidad por contexto**: Las relaciones proporcionan la jerarquía completa
--   **Compatibilidad con sistemas legados**: Respeta nomenclatura existente
+-   **Nomenclatura naval real**: Proyectos y bloques usan códigos de COTECMAR
+-   **Eficiencia en piezas**: ID int para performance en gran volumen de piezas
+-   **Doble identificación**: ID secuencial + código alfanumérico (name) para flexibilidad
+-   **Trazabilidad completa**: Relaciones FK proporcionan la jerarquía completa
+-   **Optimización de consultas**: IDs int más eficientes para JOINs masivos
 
 #### 2. **Campos de Longitud Fija vs Variable**
 
@@ -348,13 +353,18 @@ WHERE pi.status = 'pending' AND b.project_id = ?;
 
 #### **Configuración de Modelos**
 
-Todos los modelos principales usan identificadores string no incrementales:
+Los modelos usan identificadores mixtos según su propósito:
 
 ```php
-// Configuración común en Project, Block, Piece
+// Project.php y Block.php - IDs string personalizados
 protected $primaryKey = 'id';
 public $incrementing = false;
 protected $keyType = 'string';
+
+// Piece.php - ID int auto-incremental (configuración por defecto de Laravel)
+// protected $primaryKey = 'id';     // Por defecto
+// public $incrementing = true;      // Por defecto
+// protected $keyType = 'int';       // Por defecto
 ```
 
 #### **Relaciones Implementadas**
