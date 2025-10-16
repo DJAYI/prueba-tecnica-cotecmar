@@ -37,7 +37,9 @@ const downloadReport = async () => {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            isDownloadingReport.value = false;
+
+            // Recargar la página para mostrar el flash message
+            window.location.reload();
         }
     } catch (error) {
         isDownloadingReport.value = false;

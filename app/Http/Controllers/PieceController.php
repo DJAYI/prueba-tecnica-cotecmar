@@ -155,11 +155,16 @@ class PieceController extends Controller
 
             Log::info('Reporte generado exitosamente');
 
+            session()->flash('success', 'Reporte de piezas generado exitosamente');
+
             return response()->json($result);
         } catch (\Exception $e) {
             Log::error('Error al generar el reporte: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
-            return redirect()->back()->with('error', 'Error al generar el reporte: ' . $e->getMessage());
+
+            session()->flash('error', 'Error al generar el reporte: ' . $e->getMessage());
+
+            return response()->json(['error' => 'Error al generar el reporte'], 500);
         }
     }
 }

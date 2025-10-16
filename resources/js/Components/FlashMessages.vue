@@ -185,11 +185,10 @@ const checkForMessages = () => {
 
     show.value = hasFlash || hasErrors;
 
-    // Auto-dismiss success messages after 5 seconds
     if (page.props.flash?.success) {
         setTimeout(() => {
             show.value = false;
-        }, 5000);
+        }, 2000);
     }
 };
 
