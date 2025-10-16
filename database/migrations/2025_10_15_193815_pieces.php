@@ -12,27 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pieces', function (Blueprint $table) {
-            $table->id();
+            $table->string('id', 12)->primary();
             $table->char('name', 3);
-
-            $table->integer('theorical_weight');
-            $table->decimal('real_weight', 8, 1);
-
+            $table->decimal('theorical_weight', 10, 2);
+            $table->decimal('real_weight', 10, 2)->nullable();
             $table->enum('status', ['manufactured', 'pending'])->default('pending');
-
-            // Foreign key to Block
-            $table->string('block_id');
-
-            // Foreign key for User
-            $table->string('user_id')->nullable();
-
-            $table->date('manufactured_at')->nullable();
-
+            $table->string('block_id', 8);
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->timestamp('manufactured_at')->nullable();
+            $table->timestamps();
 
             $table->foreign('block_id')->references('id')->on('blocks')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
-
-            $table->timestamps();
         });
     }
 

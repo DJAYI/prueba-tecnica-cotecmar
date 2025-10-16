@@ -1,12 +1,16 @@
 <script setup>
 import { Form, Link, usePage } from "@inertiajs/vue3";
 import DashboardLayout from "../../../Layouts/DashboardLayout.vue";
-
 import { reactive, ref } from "vue";
 
+defineProps({
+    blocks: Array,
+});
+
 const form = reactive({
-    id: "",
     name: "",
+    theorical_weight: "",
+    block_id: "",
 });
 
 const csrf = ref(usePage().props.csrf_token);
@@ -18,14 +22,14 @@ const csrf = ref(usePage().props.csrf_token);
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900">
-                        Crear Proyecto
+                        Crear Pieza
                     </h1>
                     <p class="mt-1 text-sm text-gray-600">
-                        Completa la información para crear un nuevo proyecto
+                        Crea una nueva pieza en estado pendiente
                     </p>
                 </div>
                 <Link
-                    :href="`/admin/projects`"
+                    :href="`/admin/pieces`"
                     class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all"
                 >
                     <svg
@@ -49,50 +53,86 @@ const csrf = ref(usePage().props.csrf_token);
             <Form
                 method="POST"
                 :data="form"
-                :action="`/admin/projects`"
+                :action="`/admin/pieces`"
                 class="space-y-6"
             >
                 <input type="hidden" name="_token" :value="csrf" />
 
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <div>
-                        <label
-                            for="id"
-                            class="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                            ID del Proyecto
-                        </label>
-                        <input
-                            type="text"
-                            v-model="form.id"
-                            id="id"
-                            maxlength="4"
-                            name="id"
-                            placeholder="ABCD"
-                            required
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition uppercase"
-                        />
-                        <p class="mt-2 text-xs text-gray-500">
-                            Código único de 4 caracteres
-                        </p>
-                    </div>
-
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
                     <div>
                         <label
                             for="name"
                             class="block text-sm font-medium text-gray-700 mb-2"
                         >
-                            Nombre del Proyecto
+                            Nombre de la Pieza
                         </label>
                         <input
                             type="text"
                             id="name"
-                            placeholder="Proyecto Alpha"
+                            placeholder="ABC"
                             name="name"
+                            maxlength="3"
                             v-model="form.name"
+                            required
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition uppercase"
+                        />
+                        <p class="mt-2 text-xs text-gray-500">
+                            Máximo 3 caracteres
+                        </p>
+                    </div>
+
+                    <div>
+                        <label
+                            for="theorical_weight"
+                            class="block text-sm font-medium text-gray-700 mb-2"
+                        >
+                            Peso Teórico (kg)
+                        </label>
+                        <input
+                            type="number"
+                            id="theorical_weight"
+                            placeholder="1500.50"
+                            name="theorical_weight"
+                            step="0.01"
+                            min="0"
+                            v-model="form.theorical_weight"
                             required
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         />
+                        <p class="mt-2 text-xs text-gray-500">
+                            Peso esperado de la pieza
+                        </p>
+                    </div>
+
+                    <div>
+                        <label
+                            for="block_id"
+                            class="block text-sm font-medium text-gray-700 mb-2"
+                        >
+                            Bloque
+                        </label>
+                        <select
+                            id="block_id"
+                            name="block_id"
+                            v-model="form.block_id"
+                            required
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                        >
+                            <option value="" disabled>
+                                Selecciona un bloque
+                            </option>
+                            <option
+                                v-for="block in blocks"
+                                :key="block.id"
+                                :value="block.id"
+                            >
+                                {{ block.id }} -
+                                {{ block.project?.name || "N/A" }}
+                            </option>
+                        </select>
+                        <p class="mt-2 text-xs text-gray-500">
+                            Bloque al que pertenece
+                        </p>
                     </div>
                 </div>
 
@@ -100,7 +140,7 @@ const csrf = ref(usePage().props.csrf_token);
                     class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200"
                 >
                     <Link
-                        :href="`/admin/projects`"
+                        :href="`/admin/pieces`"
                         class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition"
                     >
                         Cancelar
@@ -122,7 +162,7 @@ const csrf = ref(usePage().props.csrf_token);
                                 d="M5 13l4 4L19 7"
                             />
                         </svg>
-                        Crear Proyecto
+                        Crear Pieza
                     </button>
                 </div>
             </Form>

@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Block;
+use App\Models\Piece;
 use App\Models\Project;
-use Database\Factories\ProjectFactory;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ProjectSeeder extends Seeder
@@ -14,6 +14,22 @@ class ProjectSeeder extends Seeder
      */
     public function run(): void
     {
-        Project::factory(10)->create();
+        // Create 10 projects
+        Project::factory(10)->create()->each(function ($project) {
+            // Each project has 3-5 blocks
+            Block::factory(rand(3, 5))->create([
+                'project_id' => $project->id
+            ])->each(function ($block) {
+                // Each block has 5-10 pieces
+                // 70% pending, 30% manufactured
+                Piece::factory(rand(5, 10))->create([
+                    'block_id' => $block->id
+                ]);
+
+                Piece::factory(rand(2, 4))->manufactured()->create([
+                    'block_id' => $block->id
+                ]);
+            });
+        });
     }
 }

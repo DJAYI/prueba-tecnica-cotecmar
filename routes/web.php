@@ -39,6 +39,10 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('/{id}/edit', [PieceController::class, 'edit'])->name('pieces.edit');
         Route::put('/{id}', [PieceController::class, 'update'])->name('pieces.update');
         Route::delete('/{id}', [PieceController::class, 'destroy'])->name('pieces.destroy');
+
+        // API routes for cascading selects
+        Route::get('/api/blocks/{projectId}', [PieceController::class, 'getBlocksByProject'])->name('pieces.blocks');
+        Route::get('/api/pieces/{blockId}', [PieceController::class, 'getPendingPiecesByBlock'])->name('pieces.pending');
     });
 });
 

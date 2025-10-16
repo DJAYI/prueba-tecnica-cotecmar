@@ -10,6 +10,13 @@ class Block extends Model
     use HasFactory;
 
     protected $table = 'blocks';
+
+    protected $primaryKey = 'id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     protected $fillable = [
         'id',
         'name',
@@ -19,6 +26,6 @@ class Block extends Model
     // N:1 relationship with Project
     public function project()
     {
-        return $this->belongsTo(Project::class);
+        return $this->belongsTo(Project::class, 'project_id', 'id');
     }
 }

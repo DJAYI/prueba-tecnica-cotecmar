@@ -2,64 +2,92 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Block;
+use App\Services\BlockService;
+use App\Services\ProjectService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class BlockController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private BlockService $blockService;
+    private ProjectService $projectService;
+
+    public function __construct()
+    {
+        $this->blockService = new BlockService();
+        $this->projectService = new ProjectService();
+    }
+
     public function index()
     {
-        //
+        $blocks = $this->blockService->getAllBlocks();
+
+        // Agrupar bloques por proyecto
+        $blocksByProject = $blocks->groupBy('project_id')->map(function ($blocks) {
+            return [
+                'project' => $blocks->first()->project,
+                'blocks' => $blocks
+            ];
+        })->values();
+
+        return Inertia::render('Admin/Blocks/Index', [
+            'blocksByProject' => $blocksByProject
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $projects = $this->projectService->getAllProjects();
+
+        return Inertia::render('Admin/Blocks/Create', [
+            'projects' => $projects
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'id' => 'required|string|max:8|unique:blocks,id',
+            'name' => 'required|string|max:4',
+            'project_id' => 'required|string|exists:projects,id',
+        ]);
+
+        $this->blockService->createBlock($validated);
+
+        return redirect()->route('blocks.index')
+            ->with('success', 'Bloque creado exitosamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Block $block)
+    public function edit(string $id)
     {
-        //
+        $block = $this->blockService->getBlockById($id);
+        $projects = $this->projectService->getAllProjects();
+
+        return Inertia::render('Admin/Blocks/Edit', [
+            'block' => $block,
+            'projects' => $projects
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Block $block)
+    public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:4',
+            'project_id' => 'required|string|exists:projects,id',
+        ]);
+
+        return $this->blockService->updateBlock($id, $validated);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Block $block)
+    public function destroy(string $id)
     {
-        //
-    }
+        if (!$id) {
+            return back()->withErrors(['error' => 'Invalid Block ID.']);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Block $block)
-    {
-        //
+        $this->blockService->deleteBlock($id);
+
+        return redirect()->route('blocks.index')
+            ->with('success', 'Bloque eliminado exitosamente.');
     }
 }
