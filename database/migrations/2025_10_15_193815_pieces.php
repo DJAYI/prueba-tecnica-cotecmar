@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pieces', function (Blueprint $table) {
-            $table->string('id', 12)->primary();
+            $table->id();
             $table->char('name', 3);
             $table->decimal('theorical_weight', 10, 2);
             $table->decimal('real_weight', 10, 2)->nullable();

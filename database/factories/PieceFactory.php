@@ -25,7 +25,7 @@ class PieceFactory extends Factory
         $theoricalWeight = $this->faker->numberBetween(100, 5000);
 
         return [
-            'id' => strtoupper($this->faker->bothify('????????????')), // 12 characters
+            'id' => null,
             'name' => strtoupper($this->faker->bothify('???')), // 3 characters
             'theorical_weight' => $theoricalWeight,
             'real_weight' => null,

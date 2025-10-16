@@ -117,8 +117,10 @@ prueba-tecnica-cotecmar/
 |   |   |   |-- Admin       # Paginas / Modulos de Administrador
 |   |   |   |-- Auth        # Paginas / Modulos de Autenticación
 |   |   |
-│   │   └── Layouts/       # Layouts
+│   │   └── Layouts/       # Plantillas basicas de las pagians
 │   └── views/             # Vistas Blade
+|       |-- reports/        # Plantillas de generacion de reportes PDF
+|
 ├── routes/
 │   ├── web.php            # Rutas web
 │   └── api.php            # Rutas API
@@ -127,111 +129,288 @@ prueba-tecnica-cotecmar/
 
 ## 🎨 Tecnologías Utilizadas
 
--   **Backend**: Laravel 10
+-   **Backend**: Laravel 11
 -   **Frontend**: Vue.js 3 + Inertia.js
 -   **CSS**: Tailwind CSS
--   **Base de Datos**: MySQL/PostgreSQL
+-   **Base de Datos**: SQLite
 
 ## 🗄️ Esquema de Base de Datos
 
 El sistema utiliza un esquema relacional jerárquico con las siguientes tablas:
 
-### **Proyectos**
+### **Proyectos (projects)**
 
 Tabla principal que agrupa los proyectos de construcción naval.
 
-```text
-proyectos
-├── id (string, PK)                # Identificador único del proyecto
-├── nombre (string)                 # Nombre descriptivo del proyecto
-├── created_at (timestamp)
-└── updated_at (timestamp)
+```sql
+CREATE TABLE projects (
+    id VARCHAR(4) PRIMARY KEY,          # Código de proyecto (4 caracteres)
+    name VARCHAR(255) NOT NULL,         # Nombre descriptivo del proyecto
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
 ```
 
-### **Bloques**
+**Características**:
 
-Subdivisiones estructurales de cada proyecto.
+-   **ID personalizado**: Código alfanumérico de 4 caracteres (ej: "ARC1", "P001")
+-   **Nomenclatura naval**: Permite códigos estándar de la industria naval
 
-```text
-bloques
-├── id (string, PK)                # Identificador único del bloque
-├── nombre (string)                 # Nombre descriptivo del bloque
-├── proyecto_id (string, FK)       # Relación con proyectos
-├── created_at (timestamp)
-└── updated_at (timestamp)
+### **Bloques (blocks)**
 
-Índices:
-- proyecto_id (para optimizar consultas por proyecto)
+Subdivisiones estructurales de cada proyecto que representan secciones del buque.
 
-Relaciones:
-- belongsTo: Proyecto (onDelete: cascade)
+```sql
+CREATE TABLE blocks (
+    id VARCHAR(8) PRIMARY KEY,          # Código de bloque (8 caracteres)
+    name CHAR(4) NOT NULL,             # Nombre corto del bloque
+    project_id VARCHAR(4) NOT NULL,     # FK hacia projects
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+);
 ```
 
-### **Piezas**
+**Características**:
 
-Componentes individuales que conforman cada bloque.
+-   **ID extendido**: 8 caracteres para códigos compuestos (ej: "ARC1-B01")
+-   **Nombre fijo**: Campo `CHAR(4)` para nomenclatura estandarizada
+-   **Cascada**: Eliminación automática de bloques al eliminar proyectos
 
-```text
-piezas
-├── id (string, PK)                # Identificador único de la pieza
-├── nombre (string)                 # Nombre descriptivo de la pieza
-├── peso_teorico (float)           # Peso teórico en kg
-├── peso_real (float, nullable)    # Peso real medido en kg
-├── estado (enum)                  # 'Pendiente' o 'Fabricado'
-├── bloque_id (string, FK)         # Relación con bloques
-├── fecha_registro (timestamp)     # Fecha de registro del peso real
-├── registrado_por (string)        # Usuario que registró el peso
-├── created_at (timestamp)
-└── updated_at (timestamp)
+### **Piezas (pieces)**
 
-Índices:
-- bloque_id (para consultas por bloque)
-- estado (para filtrado por estado)
-- (bloque_id, estado) (índice compuesto para consultas combinadas)
+Componentes individuales fabricados que conforman cada bloque.
 
-Relaciones:
-- belongsTo: Bloque (onDelete: cascade)
+```sql
+CREATE TABLE pieces (
+    id VARCHAR(12) PRIMARY KEY,         # Código único de pieza (12 caracteres)
+    name CHAR(3) NOT NULL,             # Código de pieza (3 caracteres)
+    theorical_weight DECIMAL(10,2) NOT NULL,  # Peso teórico en kg
+    real_weight DECIMAL(10,2) NULL,    # Peso real medido (nullable)
+    status ENUM('manufactured', 'pending') DEFAULT 'pending',
+    block_id VARCHAR(8) NOT NULL,      # FK hacia blocks
+    user_id BIGINT NULL,               # FK hacia users (nullable)
+    manufactured_at TIMESTAMP NULL,    # Fecha de fabricación
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+
+    FOREIGN KEY (block_id) REFERENCES blocks(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
 ```
 
-### **Justificación de Modificaciones al Esquema**
+**Características**:
 
-#### 1. **Uso de IDs tipo String**
+-   **Trazabilidad completa**: Registro de usuario y fecha de fabricación
+-   **Precisión decimal**: Pesos con 2 decimales para exactitud industrial
+-   **Estados controlados**: Enum para garantizar integridad de estados
+-   **Auditoría**: Campo `manufactured_at` para seguimiento temporal
 
-Se implementaron identificadores de tipo `string` en lugar de auto-incrementales para:
+### **Decisiones de Diseño del Esquema**
 
--   Permitir códigos alfanuméricos personalizados (ej: "PRY-2024-001", "BLQ-A1")
--   Mayor flexibilidad en la nomenclatura de proyectos navales
--   Facilitar la integración con sistemas externos que usen códigos específicos
+#### 1. **Identificadores Jerárquicos Personalizados**
 
-#### 2. **Campos de Auditoría**
+Se implementó un sistema de códigos alfanuméricos basado en el esquema de datos original:
 
-Se agregaron los campos `fecha_registro` y `registrado_por` en la tabla `piezas` para:
+```text
+Proyecto: "BICM" (4 chars máx) → Buque Oceanográfico
+  └── Bloque: "130-1110" (8 chars) → Sección 1110 del proyecto 130
+      └── Pieza: "B01", "A02", "H12", etc. (3 chars) → Componente específico
+```
 
--   Trazabilidad de cambios en el estado de fabricación
--   Auditoría de quién y cuándo se registró el peso real
--   Cumplimiento de estándares de calidad en construcción naval
+**Ejemplos reales del sistema**:
 
-#### 3. **Índices de Optimización**
+-   **Proyectos**: BICM (Oceanográfico), BALC (Buque DA), OPV (Offshore), BRF (Refluvial)
+-   **Bloques**: "130-1110", "135-1110", "130-3510" (formato: sector-subsección)
+-   **Piezas**: "B01", "A02", "H12", "R23", "J25", "U23", "E29" (código alfanumérico)
 
-Se implementaron índices estratégicos para:
+**Justificación**:
 
--   **`proyecto_id` en bloques**: Acelerar listados de bloques por proyecto
--   **`bloque_id` en piezas**: Optimizar consultas de piezas por bloque
--   **`estado` en piezas**: Facilitar filtrado rápido por estado de fabricación
--   **Índice compuesto `(bloque_id, estado)`**: Optimizar consultas frecuentes que filtran por bloque y estado simultáneamente
+-   **Nomenclatura naval real**: Basado en estándares de COTECMAR
+-   **Flexibilidad de códigos**: IDs no secuenciales permiten códigos técnicos
+-   **Trazabilidad por contexto**: Las relaciones proporcionan la jerarquía completa
+-   **Compatibilidad con sistemas legados**: Respeta nomenclatura existente
 
-#### 4. **Relaciones en Cascada**
+#### 2. **Campos de Longitud Fija vs Variable**
 
-Se configuró `onDelete('cascade')` en las foreign keys para:
+```sql
+-- Campos fijos para códigos estandarizados
+name CHAR(4) -- Bloques: siempre 4 caracteres
+name CHAR(3) -- Piezas: siempre 3 caracteres
 
--   Mantener integridad referencial automáticamente
--   Evitar registros huérfanos al eliminar proyectos o bloques
--   Simplificar la gestión de datos relacionados
+-- Campos variables para descripciones
+name VARCHAR(255) -- Proyectos: nombres descriptivos
+```
 
-#### 5. **Campo `peso_real` Nullable**
+**Justificación**:
 
-El campo `peso_real` es nullable porque:
+-   **Consistencia**: Códigos de longitud uniforme en reportes
+-   **Validación**: Fuerza nomenclatura estandarizada
+-   **Optimización**: `CHAR` más eficiente que `VARCHAR` para datos fijos
 
--   Las piezas se crean en estado "Pendiente" sin peso real
--   El peso real solo se registra cuando la pieza está "Fabricada"
--   Refleja el flujo real del proceso de fabricación naval
+#### 3. **Precisión Decimal en Pesos**
+
+```sql
+theorical_weight DECIMAL(10,2)  -- Hasta 99,999,999.99 kg
+real_weight DECIMAL(10,2)       -- Precisión de 2 decimales
+```
+
+**Justificación**:
+
+-   **Precisión industrial**: 2 decimales suficientes para básculas industriales
+-   **Rango amplio**: Hasta 99 toneladas por pieza individual
+-   **Evitar errores de punto flotante**: `DECIMAL` garantiza exactitud
+
+#### 4. **Estados Controlados por Enum**
+
+```sql
+status ENUM('manufactured', 'pending') DEFAULT 'pending'
+```
+
+**Justificación**:
+
+-   **Integridad de datos**: Solo valores válidos en base de datos
+-   **Performance**: Más eficiente que VARCHAR con validación en aplicación
+-   **Orden lógico**: 'manufactured' antes que 'pending' en orden alfabético
+-   **Expansibilidad**: Fácil agregar estados como 'in_progress', 'quality_check'
+
+#### 5. **Sistema de Auditoría Completo**
+
+```sql
+user_id BIGINT NULL,               -- Quién fabricó la pieza
+manufactured_at TIMESTAMP NULL,    -- Cuándo se fabricó
+created_at TIMESTAMP,              -- Cuándo se registró
+updated_at TIMESTAMP               -- Última modificación
+```
+
+**Justificación**:
+
+-   **Trazabilidad ISO**: Cumple estándares de calidad naval
+-   **Nullable**: `user_id` permite piezas sin asignar
+-   **SET NULL**: Preserva historial aunque se elimine el usuario
+-   **Auditoría temporal**: Diferencia entre registro y fabricación real
+
+#### 6. **Relaciones en Cascada Estratégicas**
+
+```sql
+-- Cascada completa: Proyecto → Bloques → Piezas
+projects CASCADE blocks CASCADE pieces
+
+-- Preservación de historial: Usuario → Piezas
+users SET NULL pieces
+```
+
+**Justificación**:
+
+-   **Integridad referencial**: Eliminar proyecto limpia todo
+-   **Preservar trazabilidad**: Mantener registro de piezas aunque usuario se elimine
+-   **Simplicidad operativa**: No requiere limpieza manual de datos huérfanos
+-   **Seguridad de datos**: Previene eliminaciones accidentales por FK constraints
+
+#### 7. **Optimización de Consultas Frecuentes**
+
+Las foreign keys crean índices automáticos para:
+
+-   `blocks.project_id`: Listar bloques por proyecto
+-   `pieces.block_id`: Listar piezas por bloque
+-   `pieces.user_id`: Consultar trabajo por usuario
+
+**Consultas optimizadas**:
+
+```sql
+-- Dashboard principal: piezas agrupadas por estado
+SELECT status, COUNT(*) FROM pieces GROUP BY status;
+
+-- Reporte completo con trazabilidad (usado en el PDF)
+SELECT
+    p.name AS proyecto,
+    b.name AS bloque,
+    pi.name AS pieza,
+    pi.theorical_weight,
+    pi.real_weight,
+    pi.status,
+    u.name AS fabricado_por,
+    pi.manufactured_at
+FROM projects p
+JOIN blocks b ON p.id = b.project_id
+JOIN pieces pi ON b.id = pi.block_id
+LEFT JOIN users u ON pi.user_id = u.id
+ORDER BY p.name, b.name, pi.name;
+
+-- Piezas pendientes por bloque (para manufacturing)
+SELECT pi.* FROM pieces pi
+JOIN blocks b ON pi.block_id = b.id
+WHERE pi.status = 'pending' AND b.project_id = ?;
+```
+
+### **Modelos Eloquent y Relaciones**
+
+#### **Configuración de Modelos**
+
+Todos los modelos principales usan identificadores string no incrementales:
+
+```php
+// Configuración común en Project, Block, Piece
+protected $primaryKey = 'id';
+public $incrementing = false;
+protected $keyType = 'string';
+```
+
+#### **Relaciones Implementadas**
+
+```php
+// Project.php - Un proyecto tiene muchos bloques
+public function blocks() {
+    return $this->hasMany(Block::class, 'project_id', 'id');
+}
+
+// Block.php - Un bloque pertenece a un proyecto y tiene muchas piezas
+public function project() {
+    return $this->belongsTo(Project::class, 'project_id', 'id');
+}
+public function pieces() {
+    return $this->hasMany(Piece::class, 'block_id', 'id');
+}
+
+// Piece.php - Una pieza pertenece a un bloque y opcionalmente a un usuario
+public function block() {
+    return $this->belongsTo(Block::class, 'block_id', 'id');
+}
+public function user() {
+    return $this->belongsTo(User::class, 'user_id', 'id');
+}
+```
+
+#### **Lógica de Negocio Implementada**
+
+**Enum de Estados**:
+
+```php
+enum PieceStatusEnum: string {
+    case PENDING = 'pending';
+    case MANUFACTURED = 'manufactured';
+}
+```
+
+**Accessor para Diferencia de Peso**:
+
+```php
+public function getDifferenceAttribute() {
+    if ($this->real_weight && $this->theorical_weight) {
+        return round($this->real_weight - $this->theorical_weight, 2);
+    }
+    return null;
+}
+```
+
+**Casting Automático**:
+
+```php
+protected function casts(): array {
+    return [
+        'status' => PieceStatusEnum::class,
+        'manufactured_at' => 'datetime',
+    ];
+}
+```

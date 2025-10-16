@@ -11,12 +11,7 @@ class Piece extends Model
     use HasFactory;
     protected $table = 'pieces';
 
-    protected $primaryKey = 'id';
-    public $incrementing = false;
-    protected $keyType = 'string';
-
     protected $fillable = [
-        'id',
         'name',
         'theorical_weight',
         'real_weight',

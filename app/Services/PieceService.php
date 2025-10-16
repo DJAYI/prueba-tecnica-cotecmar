@@ -22,7 +22,7 @@ class PieceService
             ->get();
     }
 
-    public function getPieceById(string $id): ?Piece
+    public function getPieceById(int $id): ?Piece
     {
         if (!$id) {
             return null;
@@ -33,12 +33,11 @@ class PieceService
     public function createPiece(array $data): Piece
     {
         $data['status'] = PieceStatusEnum::PENDING;
-        $data['id'] = strtoupper(substr(uniqid(), -12)); // Generate 12-char ID
 
         return Piece::create($data);
     }
 
-    public function updatePiece(string $id, array $data): ?Piece
+    public function updatePiece(int $id, array $data): ?Piece
     {
         $piece = $this->getPieceById($id);
 
@@ -57,7 +56,7 @@ class PieceService
         return $piece->fresh(['block.project', 'user']);
     }
 
-    public function deletePiece(string $id): bool
+    public function deletePiece(int $id): bool
     {
         $piece = $this->getPieceById($id);
 

@@ -31,7 +31,7 @@ class PieceController extends Controller
     }
 
 
-    public function index(Request $request)
+    public function index()
     {
         $pieces = $this->pieceService->getAllPieces();
         $projects = $this->projectService->getAllProjects();
@@ -73,7 +73,7 @@ class PieceController extends Controller
     }
 
 
-    public function edit(string $id)
+    public function edit(int $id)
     {
         $piece = $this->pieceService->getPieceById($id);
 
@@ -93,7 +93,7 @@ class PieceController extends Controller
     }
 
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, int $id)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:3',
@@ -113,7 +113,7 @@ class PieceController extends Controller
     }
 
 
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
         $deleted = $this->pieceService->deletePiece($id);
 
@@ -152,7 +152,7 @@ class PieceController extends Controller
         ]);
     }
 
-    public function manufacturingRegister(string $id)
+    public function manufacturingRegister(int $id)
     {
         $piece = $this->pieceService->getPieceById($id);
 
@@ -178,7 +178,7 @@ class PieceController extends Controller
     }
 
 
-    public function manufacturingComplete(Request $request, string $id)
+    public function manufacturingComplete(Request $request, int $id)
     {
         $validated = $request->validate([
             'real_weight' => 'required|numeric|min:0',
