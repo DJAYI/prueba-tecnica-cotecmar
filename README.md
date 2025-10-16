@@ -1,66 +1,237 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Prueba Técnica - Sistema de Gestión de Proyectos COTECMAR
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema web desarrollado con Laravel y Vue.js para la gestión de proyectos, bloques y piezas de construcción naval.
 
-## About Laravel
+## 📋 Requisitos del Sistema
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+-   **PHP** >= 8.2
+-   **Composer** >= 2.0
+-   **Node.js** >= 16.0
+-   **NPM**
+-   **MySQL** >= 8.0 o **PostgreSQL** >= 13
+-   **Git**
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Instalación
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 1. Clonar el repositorio
 
-## Learning Laravel
+```bash
+git clone https://github.com/DJAYI/prueba-tecnica-cotecmar.git
+cd prueba-tecnica-cotecmar
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 2. Instalar dependencias de PHP
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+composer install
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 3. Instalar dependencias de Node.js
 
-## Laravel Sponsors
+```bash
+npm install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 4. Configurar variables de entorno
 
-### Premium Partners
+```bash
+# Copiar el archivo de configuración
+copy .env.example .env
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+# Generar la clave de aplicación
+php artisan key:generate
+```
 
-## Contributing
+### 5. Configurar la base de datos
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Edita el archivo `.env` con tus credenciales de base de datos:
 
-## Code of Conduct
+```env
+DB_CONNECTION=sqlite
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Crear el archivo database.sqlite
 
-## Security Vulnerabilities
+### 6. Ejecutar migraciones junto con Seeders
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+# Crear las tablas en la base de datos y llenarlas
+php artisan migrate --seed
 
-## License
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 7. Configurar storage
+
+```bash
+# Crear enlace simbólico para archivos públicos
+php artisan storage:link
+```
+
+### 8. Compilar / Generar build del frontend
+
+```bash
+# Para desarrollo
+npm run dev
+
+# Para producción
+npm run build
+```
+
+## 🏃‍♂️ Ejecutar el Proyecto
+
+### Desarrollo
+
+```bash
+# Terminal 1: Servidor Laravel
+php artisan serve # o Herd
+
+# Terminal 2: Correr frontend en servidor de desarrollo local
+npm run dev
+
+# Terminal 3: Optimizador
+php artisan optimize:clear
+```
+
+La aplicación estará disponible en: `http://localhost:8000`
+
+## 📁 Estructura del Proyecto
+
+```plaintext
+prueba-tecnica-cotecmar/
+├── app/
+│   ├── Http/Controllers/     # Controladores HTTP
+│   ├── Models/              # Modelos Eloquent
+|   |-- Exports/            # Clases exports para reportes PDF
+|   |-- Services/           # Servicios que proporcionan logica compleja
+|   |-- Enums/               # Enumeraciones
+|   |
+│   └── ...
+├── database/
+|   |-- factories/              # Generadores automaticos de datos de prueba
+│   ├── migrations/          # Migraciones de BD
+│   └── seeders/            # Seeders
+├── resources/
+│   ├── js/
+│   │   ├── Pages/         # Páginas
+|   |   |   |
+|   |   |   |-- Admin       # Paginas / Modulos de Administrador
+|   |   |   |-- Auth        # Paginas / Modulos de Autenticación
+|   |   |
+│   │   └── Layouts/       # Layouts
+│   └── views/             # Vistas Blade
+├── routes/
+│   ├── web.php            # Rutas web
+│   └── api.php            # Rutas API
+└── public/               # Archivos públicos
+```
+
+## 🎨 Tecnologías Utilizadas
+
+-   **Backend**: Laravel 10
+-   **Frontend**: Vue.js 3 + Inertia.js
+-   **CSS**: Tailwind CSS
+-   **Base de Datos**: MySQL/PostgreSQL
+
+## 🗄️ Esquema de Base de Datos
+
+El sistema utiliza un esquema relacional jerárquico con las siguientes tablas:
+
+### **Proyectos**
+
+Tabla principal que agrupa los proyectos de construcción naval.
+
+```text
+proyectos
+├── id (string, PK)                # Identificador único del proyecto
+├── nombre (string)                 # Nombre descriptivo del proyecto
+├── created_at (timestamp)
+└── updated_at (timestamp)
+```
+
+### **Bloques**
+
+Subdivisiones estructurales de cada proyecto.
+
+```text
+bloques
+├── id (string, PK)                # Identificador único del bloque
+├── nombre (string)                 # Nombre descriptivo del bloque
+├── proyecto_id (string, FK)       # Relación con proyectos
+├── created_at (timestamp)
+└── updated_at (timestamp)
+
+Índices:
+- proyecto_id (para optimizar consultas por proyecto)
+
+Relaciones:
+- belongsTo: Proyecto (onDelete: cascade)
+```
+
+### **Piezas**
+
+Componentes individuales que conforman cada bloque.
+
+```text
+piezas
+├── id (string, PK)                # Identificador único de la pieza
+├── nombre (string)                 # Nombre descriptivo de la pieza
+├── peso_teorico (float)           # Peso teórico en kg
+├── peso_real (float, nullable)    # Peso real medido en kg
+├── estado (enum)                  # 'Pendiente' o 'Fabricado'
+├── bloque_id (string, FK)         # Relación con bloques
+├── fecha_registro (timestamp)     # Fecha de registro del peso real
+├── registrado_por (string)        # Usuario que registró el peso
+├── created_at (timestamp)
+└── updated_at (timestamp)
+
+Índices:
+- bloque_id (para consultas por bloque)
+- estado (para filtrado por estado)
+- (bloque_id, estado) (índice compuesto para consultas combinadas)
+
+Relaciones:
+- belongsTo: Bloque (onDelete: cascade)
+```
+
+### **Justificación de Modificaciones al Esquema**
+
+#### 1. **Uso de IDs tipo String**
+
+Se implementaron identificadores de tipo `string` en lugar de auto-incrementales para:
+
+-   Permitir códigos alfanuméricos personalizados (ej: "PRY-2024-001", "BLQ-A1")
+-   Mayor flexibilidad en la nomenclatura de proyectos navales
+-   Facilitar la integración con sistemas externos que usen códigos específicos
+
+#### 2. **Campos de Auditoría**
+
+Se agregaron los campos `fecha_registro` y `registrado_por` en la tabla `piezas` para:
+
+-   Trazabilidad de cambios en el estado de fabricación
+-   Auditoría de quién y cuándo se registró el peso real
+-   Cumplimiento de estándares de calidad en construcción naval
+
+#### 3. **Índices de Optimización**
+
+Se implementaron índices estratégicos para:
+
+-   **`proyecto_id` en bloques**: Acelerar listados de bloques por proyecto
+-   **`bloque_id` en piezas**: Optimizar consultas de piezas por bloque
+-   **`estado` en piezas**: Facilitar filtrado rápido por estado de fabricación
+-   **Índice compuesto `(bloque_id, estado)`**: Optimizar consultas frecuentes que filtran por bloque y estado simultáneamente
+
+#### 4. **Relaciones en Cascada**
+
+Se configuró `onDelete('cascade')` en las foreign keys para:
+
+-   Mantener integridad referencial automáticamente
+-   Evitar registros huérfanos al eliminar proyectos o bloques
+-   Simplificar la gestión de datos relacionados
+
+#### 5. **Campo `peso_real` Nullable**
+
+El campo `peso_real` es nullable porque:
+
+-   Las piezas se crean en estado "Pendiente" sin peso real
+-   El peso real solo se registra cuando la pieza está "Fabricada"
+-   Refleja el flujo real del proceso de fabricación naval
